@@ -366,7 +366,7 @@
         const brandStoryTopBtn = document.getElementById('brandStoryTopBtn');
         const brandStoryFinalBtn = document.getElementById('brandStoryFinalBtn');
         const loadingProgress = document.getElementById('loadingProgress');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { desynchronized: true });
 
         function navigateWithDissolve(href) {
             document.body.classList.add('page-out');
@@ -390,9 +390,10 @@
             bgProgress: 0,
             currentSpin: 0,
         };
-        let progressAnimation = null;
-        let backgroundAnimation = null;
-        let scrollAnimationFrame = null;
+        let scrollMotionAnimation = null;
+        let backgroundMotionAnimation = null;
+        let scrollMotionFrame = null;
+        let lastMotionTarget = 0;
         let idleTime = 0;
         let initialAssetsLoaded = 0;
         let initialAssetsTotal = 0;
@@ -453,10 +454,11 @@
         const PHASE_PER_SECTION = Math.PI * 0.4;
         const CENTER_DEPTH = 0.5;
         const SCROLL_EASE = [0.2, 0.95, 0.25, 1];
-        const SCROLL_SETTLE_DURATION = 1.05;
-        const BG_SETTLE_DURATION = 1.3;
+        const SCROLL_MOTION_DURATION = 0.16;
+        const BG_MOTION_DURATION = 0.26;
+        const MOTION_TARGET_EPSILON = 0.0002;
         const CARD_REVEAL_DURATION = 1.05;
-        const CARD_TRANSITION_OPACITY_DROP = 0.34;
+        const CARD_TRANSITION_OPACITY_DROP = 0.22;
         const IDLE_START_DELTA = 0.00025;
         const IDLE_DRIFT_DELAY = 0.7;
         const IDLE_DRIFT_RAMP_DURATION = 2.4;
@@ -561,13 +563,18 @@
             canvas.style.width = `${W}px`;
             canvas.style.height = `${H}px`;
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'medium';
             cx = W / 2;
             cy = H / 2;
         }
 
+        function getScrollMax() {
+            return Math.max(1, scrollSnap.scrollHeight - scrollSnap.clientHeight);
+        }
+
         function updateScrollProgress() {
-            const max = Math.max(1, scrollSnap.scrollHeight - scrollSnap.clientHeight);
-            scrollProgress = scrollSnap.scrollTop / max;
+            scrollProgress = scrollSnap.scrollTop / getScrollMax();
         }
 
         function updateLoadingProgress() {
@@ -608,50 +615,51 @@
             });
         }
 
-        function stopScrollAnimations() {
-            progressAnimation?.stop();
-            backgroundAnimation?.stop();
-        }
-
         function syncScrollStateToProgress() {
-            stopScrollAnimations();
+            scrollMotionAnimation?.stop();
+            backgroundMotionAnimation?.stop();
+            scrollMotionFrame = null;
+            lastMotionTarget = scrollProgress;
             scrollState.renderProgress = scrollProgress;
             scrollState.bgProgress = scrollProgress;
             scrollState.currentSpin = scrollProgress * Math.PI * 2 * TOTAL_TURNS;
         }
 
         function animateScrollStateToProgress() {
+            if (Math.abs(scrollProgress - lastMotionTarget) < MOTION_TARGET_EPSILON) return;
+            lastMotionTarget = scrollProgress;
             const targetSpin = scrollProgress * Math.PI * 2 * TOTAL_TURNS;
 
-            stopScrollAnimations();
+            scrollMotionAnimation?.stop();
+            backgroundMotionAnimation?.stop();
 
-            progressAnimation = animate(
+            scrollMotionAnimation = animate(
                 scrollState,
                 {
                     renderProgress: scrollProgress,
                     currentSpin: targetSpin,
                 },
                 {
-                    duration: SCROLL_SETTLE_DURATION,
+                    duration: SCROLL_MOTION_DURATION,
                     ease: SCROLL_EASE,
                 }
             );
 
-            backgroundAnimation = animate(
+            backgroundMotionAnimation = animate(
                 scrollState,
                 { bgProgress: scrollProgress },
                 {
-                    duration: BG_SETTLE_DURATION,
+                    duration: BG_MOTION_DURATION,
                     ease: SCROLL_EASE,
                 }
             );
         }
 
-        function scheduleScrollStateAnimation() {
-            if (scrollAnimationFrame !== null) return;
+        function scheduleScrollMotion() {
+            if (scrollMotionFrame !== null) return;
 
-            scrollAnimationFrame = requestAnimationFrame(() => {
-                scrollAnimationFrame = null;
+            scrollMotionFrame = requestAnimationFrame(() => {
+                scrollMotionFrame = null;
                 animateScrollStateToProgress();
             });
         }
@@ -933,7 +941,14 @@
 
         function onScroll() {
             updateScrollProgress();
-            scheduleScrollStateAnimation();
+            scheduleScrollMotion();
+        }
+
+        function onWheel() {
+            requestAnimationFrame(() => {
+                updateScrollProgress();
+                scheduleScrollMotion();
+            });
         }
 
         function updateLightCursorTarget(clientX, clientY) {
@@ -1141,6 +1156,26 @@
             };
         }
 
+        function renderCardForExit(card, exitProgress) {
+            return exitProgress <= 0.001 ? card : applyFinalCardsExit(card, exitProgress);
+        }
+
+        function drawCardPass(cards, exitProgress, drawFront) {
+            for (let i = 0; i < cards.length; i += 1) {
+                const card = renderCardForExit(cards[i], exitProgress);
+                const isFront = card.depth >= CENTER_DEPTH;
+                if (isFront !== drawFront) continue;
+                drawCard(card.media, card.sx, card.sy, card.w, card.h, card.opacity, card.blur);
+            }
+        }
+
+        function drawCardBadges(cards, exitProgress) {
+            for (let i = 0; i < cards.length; i += 1) {
+                const card = renderCardForExit(cards[i], exitProgress);
+                drawBadgeOverlay(card.media, card.sx, card.sy, card.w, card.h, card.opacity);
+            }
+        }
+
         let lastTime = performance.now();
         function frame(now) {
             const dt = Math.min(now - lastTime, 50);
@@ -1171,25 +1206,18 @@
             const blendedPhase = phaseCurrent + (phaseNext - phaseCurrent) * mix;
             const allCards = projectLayer(0, currentSpin, blendedPhase, cardLayerAlpha, idleAmount).sort((a, b) => a.depth - b.depth);
             const finalCardsExit = getFinalCardsExitProgress(sectionFloat);
-            const visibleCards = allCards.map((card) => applyFinalCardsExit(card, finalCardsExit));
 
             ctx.clearRect(0, 0, W, H);
 
-            visibleCards
-                .filter((card) => card.depth < CENTER_DEPTH)
-                .forEach((card) => drawCard(card.media, card.sx, card.sy, card.w, card.h, card.opacity, card.blur));
+            drawCardPass(allCards, finalCardsExit, false);
 
             drawCenterTransition(currentIndex, nextIndex, mix);
             drawCenterStepper(sectionFloat);
 
-            visibleCards
-                .filter((card) => card.depth >= CENTER_DEPTH)
-                .forEach((card) => drawCard(card.media, card.sx, card.sy, card.w, card.h, card.opacity, card.blur));
+            drawCardPass(allCards, finalCardsExit, true);
 
             // Keep numbering always readable on top of everything.
-            visibleCards.forEach((card) => {
-                drawBadgeOverlay(card.media, card.sx, card.sy, card.w, card.h, card.opacity);
-            });
+            drawCardBadges(allCards, finalCardsExit);
 
             requestAnimationFrame(frame);
         }
@@ -1198,6 +1226,7 @@
         updateScrollProgress();
         syncScrollStateToProgress();
         scrollSnap.addEventListener('scroll', onScroll, { passive: true });
+        scrollSnap.addEventListener('wheel', onWheel, { passive: true });
         window.addEventListener('resize', () => {
             resize();
             updateScrollProgress();
