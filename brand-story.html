@@ -4,25 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
   <title>LOEM - Brand Story</title>
   <style>
     @font-face {
       font-family: "Test Martina Plantijn";
-      src: url("/fonts/TestMartinaPlantijn-Light.otf") format("opentype");
+      src: url("/assets/fonts/TestMartinaPlantijn-Light.otf") format("opentype");
       font-weight: 300;
       font-display: swap;
     }
 
     @font-face {
       font-family: "Test Martina Plantijn";
-      src: url("/fonts/TestMartinaPlantijn-Regular.otf") format("opentype");
+      src: url("/assets/fonts/TestMartinaPlantijn-Regular.otf") format("opentype");
       font-weight: 400;
       font-display: swap;
     }
 
     @font-face {
       font-family: "Greed Condensed";
-      src: url("/fonts/Greed%20Condensed/GreedCondensed-TRIAL-SemiBold.otf") format("opentype");
+      src: url("/assets/fonts/Greed%20Condensed/GreedCondensed-TRIAL-SemiBold.otf") format("opentype");
       font-weight: 600;
       font-display: swap;
     }
@@ -77,7 +78,7 @@
       pointer-events: none;
       z-index: 60;
       transform: translate(-50%, -50%);
-      background: url("Assets/cursor_brandstory.png") center / contain no-repeat;
+      background: url("/assets/cursors/cursor_brandstory.png") center / contain no-repeat;
       mix-blend-mode: lighten;
       filter: blur(1px) brightness(1.25);
       opacity: 0;
@@ -136,6 +137,13 @@
 
     .top-link:hover {
       color: #ff9d00;
+    }
+
+    .top-link--pending,
+    .top-link--pending:hover {
+      color: #685C57;
+      cursor: default;
+      pointer-events: none;
     }
 
     .top-link.right {
@@ -528,21 +536,21 @@
   <header class="top-nav">
     <a class="top-link js-nav" href="/index.html">Brand Intro</a>
     <div class="brand-lockup">
-      <img src="/Assets/Wordmark.svg" alt="LOEM wordmark">
+      <img src="/assets/brand/Wordmark.svg" alt="LOEM wordmark">
     </div>
-    <a class="top-link right" href="#">Look Book</a>
+    <span class="top-link top-link--pending right" role="link" aria-disabled="true" title="Coming soon">Look Book</span>
   </header>
 
   <main class="story">
     <p class="page-brand-story">Brand Story</p>
     <section class="scene scene-collections" data-scene>
       <div class="hero scene-media">
-        <img class="hero-left" data-parallax="0.05" src="/Assets/260421_NEAET0428_001-02 6.png" alt="">
-        <img class="hero-center" data-parallax="0.62" src="/Assets/Commission Studio The Harmonist Candles 1 1.png"
+        <img class="hero-left" data-parallax="0.05" src="/assets/images/brand-story/hero/260421_NEAET0428_001-02 6.png" alt="">
+        <img class="hero-center" data-parallax="0.62" src="/assets/images/brand-story/hero/Commission Studio The Harmonist Candles 1 1.png"
           alt="">
       </div>
       <div class="hero-copy scene-text">
-        <p class="eyebrow">What we do<br>[ADD CHINESE]</p>
+        <p class="eyebrow">What we do</p>
         <p class="hero-body">We design everyday objects and<br>ready-to-wear essentials that<br>bring fluidity to modern
           living.</p>
       </div>
@@ -557,9 +565,9 @@
             instinctively.<br>Daily routines are transformed,<br>new possibilities emerge.</p>
         </div>
         <div class="philo-collage scene-media">
-          <img class="philo-main" data-parallax="0.28" src="/Assets/original_b7d2b5f487323ae4b619776d5f5c4556 1.png"
+          <img class="philo-main" data-parallax="0.28" src="/assets/images/brand-story/philosophy/original_b7d2b5f487323ae4b619776d5f5c4556 1.png"
             alt="">
-          <img class="philo-side" data-parallax="0.62" src="/Assets/e43fda12-4792-434d-8942-bc44fea8206f 2.png" alt="">
+          <img class="philo-side" data-parallax="0.62" src="/assets/images/brand-story/philosophy/e43fda12-4792-434d-8942-bc44fea8206f 2.png" alt="">
         </div>
       </div>
     </section>
@@ -578,15 +586,15 @@
       <div class="collections scene-text">
         <p>Our collections</p>
         <div class="collection-grid">
-          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Core-White%201.png"
+          <div class="collection-item"><img src="/assets/icons/product-ranges/Loem-ProductRangeIcons-Core-White%201.png"
               alt="Loēm Core icon"><span>Loēm Core</span></div>
-          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Sleep-White%201.png"
+          <div class="collection-item"><img src="/assets/icons/product-ranges/Loem-ProductRangeIcons-Sleep-White%201.png"
               alt="Loēm Sleep icon"><span>Loēm Sleep</span></div>
-          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Skin-White%201.png"
+          <div class="collection-item"><img src="/assets/icons/product-ranges/Loem-ProductRangeIcons-Skin-White%201.png"
               alt="Loēm Skin icon"><span>Loēm Skin</span></div>
-          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Jewellery-White%201.png"
+          <div class="collection-item"><img src="/assets/icons/product-ranges/Loem-ProductRangeIcons-Jewellery-White%201.png"
               alt="Loēm Jewellery icon"><span>Loēm Jewellery</span></div>
-          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Objects-White%201.png"
+          <div class="collection-item"><img src="/assets/icons/product-ranges/Loem-ProductRangeIcons-Objects-White%201.png"
               alt="Loēm Objects icon"><span>Loēm Objects</span></div>
         </div>
       </div>
@@ -595,7 +603,7 @@
     <section class="scene em-video-section" data-scene>
       <div class="em-video-wrap">
         <video id="emWhiteVideo" class="em-video" preload="auto" playsinline webkit-playsinline muted>
-          <source src="/Assets/Em-White.mov" type="video/quicktime">
+          <source src="/assets/videos/brand-story/Em-White.mov" type="video/quicktime">
         </video>
         <p class="em-video-caption">THE FLOW STATES WE EMBRACE</p>
       </div>
@@ -603,25 +611,25 @@
 
     <section class="scene flow-video-section" data-scene>
       <video class="flow-video js-flow-video" preload="auto" playsinline webkit-playsinline muted autoplay loop>
-        <source src="/Assets/PRESENCE-01.mp4" type="video/mp4">
+        <source src="/assets/videos/brand-story/PRESENCE-01.mp4" type="video/mp4">
       </video>
     </section>
 
     <section class="scene flow-video-section" data-scene>
       <video class="flow-video js-flow-video" preload="auto" playsinline webkit-playsinline muted autoplay loop>
-        <source src="/Assets/CONNECTION-01.mp4" type="video/mp4">
+        <source src="/assets/videos/brand-story/CONNECTION-01.mp4" type="video/mp4">
       </video>
     </section>
 
     <section class="scene flow-video-section" data-scene>
       <video class="flow-video js-flow-video" preload="auto" playsinline webkit-playsinline muted autoplay loop>
-        <source src="/Assets/ENERGY-01.mp4" type="video/mp4">
+        <source src="/assets/videos/brand-story/ENERGY-01.mp4" type="video/mp4">
       </video>
     </section>
 
     <section class="scene flow-video-section" data-scene>
       <video class="flow-video js-flow-video" preload="auto" playsinline webkit-playsinline muted autoplay loop>
-        <source src="/Assets/EXPANSION-01.mp4" type="video/mp4">
+        <source src="/assets/videos/brand-story/EXPANSION-01.mp4" type="video/mp4">
       </video>
     </section>
   </main>

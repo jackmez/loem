@@ -4,18 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIFE</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+    <title>Loēm Brand Lookbook</title>
     <style>
         @font-face {
             font-family: "Test Martina Plantijn";
-            src: url("/fonts/TestMartinaPlantijn-Light.otf") format("opentype");
+            src: url("/assets/fonts/TestMartinaPlantijn-Light.otf") format("opentype");
             font-weight: 300;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: "Greed Condensed";
-            src: url("/fonts/Greed%20Condensed/GreedCondensed-TRIAL-SemiBold.otf") format("opentype");
+            src: url("/assets/fonts/Greed%20Condensed/GreedCondensed-TRIAL-SemiBold.otf") format("opentype");
             font-weight: 600;
             font-style: normal;
             font-display: swap;
@@ -79,7 +80,7 @@
             pointer-events: none;
             z-index: 5;
             transform: translate(-50%, -50%);
-            background: url("Assets/landing-cursor.png") center / contain no-repeat;
+            background: url("/assets/cursors/landing-cursor.png") center / contain no-repeat;
             mix-blend-mode: color-dodge;
             filter: blur(2px);
             opacity: 0;
@@ -174,6 +175,12 @@
             color: #ff9d00;
         }
 
+        .top-chrome__btn:disabled,
+        .final-actions__btn:disabled {
+            color: #6f6a61;
+            cursor: default;
+        }
+
         .top-chrome__logo {
             width: clamp(80px, 9.5vw, 140px);
             height: auto;
@@ -261,15 +268,15 @@
                 <button id="brandStoryTopBtn" class="top-chrome__btn" type="button">Brand Story</button>
             </div>
         <div class="top-chrome__slot top-chrome__slot--center">
-            <img class="top-chrome__logo" src="Assets/Wordmark.svg" alt="Loem wordmark">
+            <img class="top-chrome__logo" src="/assets/brand/Wordmark.svg" alt="Loem wordmark">
         </div>
         <div class="top-chrome__slot top-chrome__slot--right">
-            <button class="top-chrome__btn" type="button">Look Book</button>
+            <button class="top-chrome__btn" type="button" disabled aria-disabled="true" title="Coming soon">Look Book</button>
         </div>
     </div>
     <div id="finalActions" class="final-actions" aria-hidden="true">
         <button id="brandStoryFinalBtn" class="final-actions__btn" type="button">Brand Story</button>
-        <button class="final-actions__btn" type="button">Brand in Action</button>
+        <button class="final-actions__btn" type="button" disabled aria-disabled="true" title="Coming soon">Brand in Action</button>
     </div>
     <div id="scrollSnap" class="scroll-snap" aria-hidden="true">
         <section class="snap-section"></section>
@@ -323,19 +330,19 @@
         let idleTime = 0;
 
         const BASE_IMAGE_PATHS = [
-            "Assets/new_image_landing/Frame 2090055623.png",
-            "Assets/new_image_landing/Frame 2090055627.png",
-            "Assets/new_image_landing/Frame 2090055634.png",
-            "Assets/new_image_landing/Frame 2090055643.png",
-            "Assets/new_image_landing/Frame 2090055661.png",
-            "Assets/new_image_landing/Screenshot 2026-04-21 at 10.39.14 2.png",
-            "Assets/new_image_landing/e43fda12-4792-434d-8942-bc44fea8206f 2.png",
-            "Assets/new_image_landing/loreworld_1768413242_3810047991433109308_65923060496 9.png",
-            "Assets/new_image_landing/marvin-leuvrey_stills_025 4.png",
-            "Assets/new_image_landing/samuelpasquier_1691943848_3168577116093411413_9420069 5.png",
+            "/assets/images/landing/cards/Frame 2090055623.png",
+            "/assets/images/landing/cards/Frame 2090055627.png",
+            "/assets/images/landing/cards/Frame 2090055634.png",
+            "/assets/images/landing/cards/Frame 2090055643.png",
+            "/assets/images/landing/cards/Frame 2090055661.png",
+            "/assets/images/landing/cards/Screenshot 2026-04-21 at 10.39.14 2.png",
+            "/assets/images/landing/cards/e43fda12-4792-434d-8942-bc44fea8206f 2.png",
+            "/assets/images/landing/cards/loreworld_1768413242_3810047991433109308_65923060496 9.png",
+            "/assets/images/landing/cards/marvin-leuvrey_stills_025 4.png",
+            "/assets/images/landing/cards/samuelpasquier_1691943848_3168577116093411413_9420069 5.png",
         ];
-        const CENTER_VIDEO_PATH = "Assets/Loem-Black.mov";
-        const CENTER_VIDEO_FALLBACK_PATH = "Assets/A-Black.mp4";
+        const CENTER_VIDEO_PATH = "/assets/videos/landing/Loem-Black.mov";
+        const CENTER_VIDEO_FALLBACK_PATH = "/assets/videos/landing/A-Black.mp4";
         const CENTER_STEPS = [
             { type: 'text', text: "A modern living practice," },
             { type: 'text', text: "redefining daily essentials—for flow." },
