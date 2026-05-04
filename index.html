@@ -410,6 +410,12 @@
             targetScale: 0.9,
             hasMoved: false,
         };
+        const cameraWobble = {
+            targetX: 0,
+            targetY: 0,
+            x: 0,
+            y: 0,
+        };
 
         const BASE_IMAGE_PATHS = [
             "/assets/images/landing/cards/Frame 2090055623.jpg",
@@ -464,6 +470,9 @@
         const IDLE_DRIFT_RAMP_DURATION = 2.4;
         const IDLE_DRIFT_X_RATIO = 0.0016;
         const IDLE_DRIFT_Y_RATIO = 0.0018;
+        const CAMERA_WOBBLE_X_RATIO = 0.018;
+        const CAMERA_WOBBLE_Y_RATIO = 0.014;
+        const CAMERA_WOBBLE_SPIN = 0.026;
         const WORLD_RADIUS = 0.57;
         const HORIZONTAL_SPREAD = 1.9;
         const CARD_SIZE_BOOST = 1.68;
@@ -893,9 +902,12 @@
         }
 
         function projectLayer(sectionIndex, spinRad, phaseOffset, layerAlpha, idleAmount) {
-            const cosS = Math.cos(spinRad + phaseOffset);
-            const sinS = Math.sin(spinRad + phaseOffset);
+            const wobbleSpin = cameraWobble.x * CAMERA_WOBBLE_SPIN;
+            const cosS = Math.cos(spinRad + phaseOffset + wobbleSpin);
+            const sinS = Math.sin(spinRad + phaseOffset + wobbleSpin);
             const R = Math.min(W, H) * WORLD_RADIUS;
+            const wobbleX = cameraWobble.x * clamp(W * CAMERA_WOBBLE_X_RATIO, 10, 34);
+            const wobbleY = cameraWobble.y * clamp(H * CAMERA_WOBBLE_Y_RATIO, 8, 26);
 
             return particles.map((p) => {
                 const rx = p.x * cosS - p.z * sinS;
@@ -917,8 +929,9 @@
                 const slotSeed = p.slot * 0.91 + 0.37;
                 const idleWaveX = Math.sin(idleTime * 0.36 + slotSeed) * clamp(W * IDLE_DRIFT_X_RATIO, 0.8, 3.2) * idleAmount;
                 const idleWaveY = Math.cos(idleTime * 0.42 + slotSeed * 1.3) * clamp(H * IDLE_DRIFT_Y_RATIO, 0.8, 3.0) * idleAmount;
-                const sx = rawSx + shiftX + idleWaveX;
-                const sy = rawSy + shiftY + idleWaveY;
+                const depthWobble = 0.38 + depth * 0.72;
+                const sx = rawSx + shiftX + idleWaveX - wobbleX * depthWobble;
+                const sy = rawSy + shiftY + idleWaveY - wobbleY * depthWobble;
 
                 const boostedDepth = clamp(depth + (media.layerBoost || 0), 0, 1);
                 const renderDepth = media.forceFront ? 2 + boostedDepth : boostedDepth;
@@ -967,6 +980,10 @@
             cursorState.x += (cursorState.targetX - cursorState.x) * 0.16;
             cursorState.y += (cursorState.targetY - cursorState.y) * 0.16;
             cursorState.scale += (cursorState.targetScale - cursorState.scale) * 0.12;
+            cameraWobble.targetX = clamp((cursorState.x - cx) / Math.max(1, W * 0.5), -1, 1);
+            cameraWobble.targetY = clamp((cursorState.y - cy) / Math.max(1, H * 0.5), -1, 1);
+            cameraWobble.x += (cameraWobble.targetX - cameraWobble.x) * 0.08;
+            cameraWobble.y += (cameraWobble.targetY - cameraWobble.y) * 0.08;
             lightCursor.style.transform = `translate3d(${cursorState.x.toFixed(2)}px, ${cursorState.y.toFixed(2)}px, 0) translate(-50%, -50%) scale(${cursorState.scale.toFixed(3)})`;
         }
 
