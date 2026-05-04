@@ -1,5 +1,4 @@
 @import url("./shared/cursor.css");
-@import url("./shared/footer.css");
 
 @font-face {
   font-family: "Test Martina Plantijn";
@@ -60,14 +59,6 @@ body.page-loading {
 
 body.page-out {
   opacity: 0;
-}
-
-.site-footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding-bottom: 28px;
 }
 
 .loading-screen {
