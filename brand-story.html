@@ -23,26 +23,34 @@
     </header>
 
     <main class="story">
-      <section class="scene scene-collections" data-scene>
-        <div class="hero scene-media">
-          <img
-            class="hero-left"
-            data-parallax="0.05"
-            src="/assets/images/brand-story/hero/260421_NEAET0428_001-02 6.jpg"
-            alt=""
-          />
-          <img
-            class="hero-center"
-            data-parallax="0.62"
-            src="/assets/images/brand-story/hero/Commission Studio The Harmonist Candles 1 1.jpg"
-            alt=""
-          />
+      <section class="scene what-we-do" data-scene>
+        <div class="what-we-do__image-wrap scene-media" data-parallax="0.12">
+          <video
+            class="what-we-do__image js-autoplay-video"
+            preload="auto"
+            playsinline
+            webkit-playsinline
+            muted
+            autoplay
+            loop
+          >
+            <source
+              src="/assets/videos/brand-story/brand-story-header.mp4"
+              type="video/mp4"
+            />
+          </video>
+          <span class="what-we-do__wordmark" aria-label="LOEM"></span>
+          <p class="what-we-do__meta what-we-do__meta--left">
+            A modern living practice
+          </p>
+          <p class="what-we-do__meta what-we-do__meta--right">Est. 2026</p>
         </div>
-        <div class="hero-copy scene-text">
-          <p class="eyebrow">What we do</p>
-          <p class="hero-body">
-            We design everyday objects and<br />ready-to-wear essentials that<br />bring
-            fluidity to modern living.
+        <div class="what-we-do__copy scene-text">
+          <p class="what-we-do__eyebrow">What we do<br />我们做什么</p>
+          <p class="what-we-do__body">
+            <span>We design everyday objects and</span>
+            <span>ready-to-wear essentials that</span>
+            <span>bring fluidity to modern living.</span>
           </p>
         </div>
       </section>
@@ -129,22 +137,7 @@
       </section>
 
       <section class="scene em-video-section" data-scene>
-        <div class="em-video-wrap">
-          <video
-            id="emWhiteVideo"
-            class="em-video"
-            preload="auto"
-            playsinline
-            webkit-playsinline
-            muted
-          >
-            <source
-              src="/assets/videos/brand-story/Em-White.mp4"
-              type="video/mp4"
-            />
-          </video>
           <p class="em-video-caption">THE FLOW STATES WE EMBRACE</p>
-        </div>
       </section>
 
       <section class="scene flow-video-section" data-scene>
@@ -162,6 +155,26 @@
             type="video/mp4"
           />
         </video>
+        <div class="flow-state" aria-hidden="true" data-flow-state="presence">
+          <div class="flow-state__title">
+            <p class="flow-state__title-cn">觉知</p>
+            <p class="flow-state__title-en">Presence</p>
+          </div>
+          <div class="flow-state__copy flow-state__copy--left">
+            <p class="flow-state__eyebrow">The feeling</p>
+            <p class="flow-state__body">
+              A self-forgetting focus.<br />
+              Fullness found in being truly present.
+            </p>
+          </div>
+          <div class="flow-state__copy flow-state__copy--right">
+            <p class="flow-state__eyebrow">The design</p>
+            <p class="flow-state__body">
+              Tactile textures that invite touch,<br />
+              forms that reward attention.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section class="scene flow-video-section" data-scene>
@@ -179,6 +192,30 @@
             type="video/mp4"
           />
         </video>
+        <div class="flow-state" aria-hidden="true" data-flow-state="connection">
+          <div class="flow-state__title">
+            <p class="flow-state__title-cn">联结</p>
+            <p class="flow-state__title-en">Connection</p>
+          </div>
+          <div
+            class="flow-state__copy flow-state__copy--left flow-state__copy--wide"
+          >
+            <p class="flow-state__eyebrow">The feeling</p>
+            <p class="flow-state__body">
+              Grounded with nature, people and place.<br />
+              A bold sense of your own pace of the world.
+            </p>
+          </div>
+          <div
+            class="flow-state__copy flow-state__copy--right flow-state__copy--wide"
+          >
+            <p class="flow-state__eyebrow">The design</p>
+            <p class="flow-state__body">
+              Materials honoured for their integrity and quality. Natural
+              textures, raw and real beauty.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section class="scene flow-video-section" data-scene>
@@ -196,6 +233,29 @@
             type="video/mp4"
           />
         </video>
+        <div class="flow-state" aria-hidden="true" data-flow-state="energy">
+          <div class="flow-state__title">
+            <p class="flow-state__title-cn">能量</p>
+            <p class="flow-state__title-en">Energy</p>
+          </div>
+          <div
+            class="flow-state__copy flow-state__copy--left flow-state__copy--wide"
+          >
+            <p class="flow-state__eyebrow">The feeling</p>
+            <p class="flow-state__body">
+              Sparking inner vitality, growing with the day.<br />
+              New energy unfolding, open to all possibilities.
+            </p>
+          </div>
+          <div
+            class="flow-state__copy flow-state__copy--right flow-state__copy--wide"
+          >
+            <p class="flow-state__eyebrow">The design</p>
+            <p class="flow-state__body">
+              Textures and scents that stir the senses.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section class="scene flow-video-section" data-scene>
@@ -213,6 +273,120 @@
             type="video/mp4"
           />
         </video>
+        <div class="flow-state" aria-hidden="true" data-flow-state="boundless">
+          <div class="flow-state__title">
+            <p class="flow-state__title-cn">漫天</p>
+            <p class="flow-state__title-en">Boundless</p>
+          </div>
+          <div
+            class="flow-state__copy flow-state__copy--left flow-state__copy--wide"
+          >
+            <p class="flow-state__eyebrow">The feeling</p>
+            <p class="flow-state__body">
+              Sparking inner vitality, growing with the day.<br />
+              New energy unfolding, open to all possibilities.
+            </p>
+          </div>
+          <div
+            class="flow-state__copy flow-state__copy--right flow-state__copy--wide"
+          >
+            <p class="flow-state__eyebrow">The design</p>
+            <p class="flow-state__body">
+              Textures and scents that stir the senses.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="brand-overview"
+        aria-labelledby="brandOverviewTitle"
+        data-scene
+      >
+        <h2 id="brandOverviewTitle" class="brand-overview__title">
+          <span>Brand Story Overview</span>
+          <span>品牌故事概述</span>
+        </h2>
+        <div class="brand-overview__list">
+          <article class="brand-overview__item">
+            <h3 class="brand-overview__label">
+              <span>Our Philosophy</span>
+              <span>我们的理念</span>
+            </h3>
+            <div class="brand-overview__body">
+              <p>
+                Guided by Eastern Zen philosophies, we believe in life elevated
+                by flow.
+              </p>
+              <p>
+                A way of moving through the world where energy moves freely and
+                instinctively. Daily routines are transformed, new possibilities
+                emerge.
+              </p>
+            </div>
+          </article>
+          <article class="brand-overview__item">
+            <h3 class="brand-overview__label">
+              <span>Who We Are</span>
+              <span>关于我们</span>
+            </h3>
+            <div class="brand-overview__body">
+              <p>
+                A modern living practice,<br />
+                redefining daily essentials to elevate flow.
+              </p>
+            </div>
+          </article>
+          <article class="brand-overview__item">
+            <h3 class="brand-overview__label">
+              <span>Why We Exist</span>
+              <span>我们的使命</span>
+            </h3>
+            <div class="brand-overview__body">
+              <p>
+                Each piece is designed to empower effortless movement between
+                places, identities, and emotional states of being.
+              </p>
+            </div>
+          </article>
+          <article class="brand-overview__item">
+            <h3 class="brand-overview__label">
+              <span>Our Values</span>
+              <span>我们的价值</span>
+            </h3>
+            <div class="brand-overview__body">
+              <p>
+                <em>The Flow states we embrace</em><br />
+                Presence • Connection • Energy • Boundless
+              </p>
+            </div>
+          </article>
+          <article class="brand-overview__item">
+            <h3 class="brand-overview__label">
+              <span>Who We Are Here For</span>
+              <span>我们服务的对象</span>
+            </h3>
+            <div class="brand-overview__body">
+              <p>
+                For those with busy lives; timeless design, lasting quality,<br />
+                and removing daily friction matters most.
+              </p>
+            </div>
+          </article>
+          <article class="brand-overview__item">
+            <h3 class="brand-overview__label">
+              <span>What We Offer</span>
+              <span>我们提供的体验</span>
+            </h3>
+            <div class="brand-overview__body">
+              <p>
+                Lifestyle ecosystem that include: Seasonal, limited releases,
+                timeless, everyday essentials. Collaborations with Global
+                designers reinterpreting our philosophy
+              </p>
+            </div>
+          </article>
+        </div>
       </section>
     </main>
 
