@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOEM - Brand Story</title>
+  <style>
+    @font-face {
+      font-family: "Test Martina Plantijn";
+      src: url("/fonts/TestMartinaPlantijn-Light.otf") format("opentype");
+      font-weight: 300;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Test Martina Plantijn";
+      src: url("/fonts/TestMartinaPlantijn-Regular.otf") format("opentype");
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Greed Condensed";
+      src: url("/fonts/Greed%20Condensed/GreedCondensed-TRIAL-SemiBold.otf") format("opentype");
+      font-weight: 600;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+    }
+
+    body {
+      min-height: 100%;
+      background: #27160f;
+      color: #fff;
+      overflow-x: hidden;
+      cursor: none;
+      opacity: 0;
+      transition: opacity 620ms ease;
+      font-family: "Test Martina Plantijn", serif;
+    }
+
+    body.page-in {
+      opacity: 1;
+    }
+
+    body.page-out {
+      opacity: 0;
+    }
+
+    html {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    .light-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 60;
+      transform: translate(-50%, -50%);
+      background: url("Assets/cursor_brandstory.png") center / contain no-repeat;
+      mix-blend-mode: lighten;
+      filter: blur(1px) brightness(1.25);
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    .light-cursor.is-visible {
+      opacity: 1;
+    }
+
+    .top-nav {
+      position: fixed;
+      top: 52px;
+      left: 28px;
+      right: 28px;
+      z-index: 50;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: start;
+      pointer-events: none;
+    }
+
+   .top-fade-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 220px;
+  pointer-events: none;
+  z-index: 45;
+  background-image: linear-gradient(
+    180deg,
+    rgba(39, 22, 15, 0.72) 0%,
+    rgba(39, 22, 15, 0.42) 42%,
+    rgba(39, 22, 15, 0.16) 75%,
+    rgba(39, 22, 15, 0) 100%
+  );
+}
+
+    .top-link,
+    .top-link:visited {
+      pointer-events: auto;
+      color: #685C57;
+      border: 0;
+      background: transparent;
+      text-decoration: none;
+      font-family: "Greed Condensed", "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      transition: color 180ms ease;
+    }
+
+    .top-link:hover {
+      color: #ff9d00;
+    }
+
+    .top-link.right {
+      justify-self: end;
+    }
+
+    .brand-lockup {
+      justify-self: center;
+      text-align: center;
+    }
+
+    .brand-lockup img {
+      width: clamp(95px, 9vw, 152px);
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .story {
+      width: min(1820px, 100vw);
+      margin: 0 auto;
+      padding-top: 120px;
+    }
+
+    .page-brand-story {
+      text-align: center;
+      font-family: "Greed Condensed", Arial, sans-serif;
+      font-size: clamp(12px, 1vw, 20px);
+      letter-spacing: 0.05em;
+      margin-top: 200px;
+      text-transform: uppercase;
+      margin: 0 0 20px;
+      opacity: 0.92;
+    }
+
+    .scene {
+      position: relative;
+      z-index: 0;
+      min-height: 30vh;
+      margin-top: 4vh;
+      --text-y: 0px;
+      --text-o: 1;
+      --media-y: 0px;
+      --media-o: 1;
+      --mix: 0;
+    }
+
+    .scene-text {
+      transform: translateY(var(--text-y));
+      opacity: var(--text-o);
+      will-change: transform, opacity;
+    }
+
+    .scene-media {
+      transform: translateY(var(--media-y));
+      opacity: var(--media-o);
+      will-change: transform, opacity;
+    }
+
+    .hero {
+      padding-top: 2vh;
+    }
+
+    .hero-left {
+      width: min(58vw, 980px);
+      aspect-ratio: 1064 / 1041;
+      object-fit: cover;
+      display: block;
+      margin-top: -4vh;
+      transform: translate3d(var(--px, 0px), calc(var(--py, 0px) + var(--media-y)), 0);
+      will-change: transform;
+    }
+
+    .hero-center {
+      position: absolute;
+      left: 42%;
+      top: 58%;
+      width: min(26vw, 420px);
+      height: min(34vw, 560px);
+      object-fit: cover;
+      z-index: 2;
+      transform: translate3d(var(--px, 0px), calc(var(--py, 0px) + var(--media-y)), 0);
+      will-change: transform;
+    }
+
+    .hero-copy {
+      position: absolute;
+      right: 6%;
+      top: 20%;
+      width: min(43vw, 690px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-weight: 400;
+      font-size: clamp(10px, 0.82vw, 15px);
+      line-height: 1.1;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 54px;
+    }
+
+    .hero-body,
+    .philo-body,
+    .mission-body {
+      font-weight: 300;
+      font-size: clamp(13px, 1.28vw, 25px);
+      line-height: 1.07;
+    }
+
+    .collections {
+      width: min(1300px, 86vw);
+      margin: 0 auto;
+      text-align: center;
+      padding-top: 1vh;
+    }
+
+    .scene.scene-collections {
+      min-height: 18vh;
+    }
+
+    .collections>p {
+      margin-bottom: 26px;
+      font-weight: 400;
+      font-size: clamp(11px, 0.95vw, 20px);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: clamp(28px, 5vw, 98px);
+      align-items: end;
+      justify-items: center;
+    }
+
+    .collection-item img {
+      width: clamp(42px, 4.4vw, 72px);
+      height: auto;
+      display: block;
+      margin: 0 auto 12px;
+      filter: brightness(0) invert(1);
+    }
+
+    .collection-item span {
+      font-family: "Greed Condensed", Arial, sans-serif;
+      font-size: clamp(11px, 0.88vw, 15px);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .collection-item {
+      opacity: 0;
+      transform: translateY(48px);
+      transition: transform 520ms cubic-bezier(0.2, 0.72, 0.2, 1), opacity 520ms ease;
+      will-change: transform, opacity;
+    }
+
+    .collection-item.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .collection-item:nth-child(1) { transition-delay: 0ms; }
+    .collection-item:nth-child(2) { transition-delay: 120ms; }
+    .collection-item:nth-child(3) { transition-delay: 240ms; }
+    .collection-item:nth-child(4) { transition-delay: 360ms; }
+    .collection-item:nth-child(5) { transition-delay: 480ms; }
+
+    .em-video-section {
+      min-height: 72vh;
+      display: grid;
+      place-items: center;
+      padding: 6vh 0 10vh;
+    }
+
+    .em-video-wrap {
+      display: grid;
+      justify-items: center;
+      gap: 24px;
+    }
+
+    .em-video {
+      width: min(42vw, 520px);
+      max-width: 88vw;
+      height: auto;
+      display: block;
+      background: transparent;
+      mix-blend-mode: multiply;
+    }
+
+    .em-video-caption {
+      text-align: center;
+      font-family: "Greed Condensed", Arial, sans-serif;
+      font-size: clamp(12px, 1vw, 20px);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      opacity: 0.92;
+    }
+
+    .flow-video-section {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 6vh 0;
+      position: relative;
+      z-index: 3;
+    }
+
+    .flow-video {
+      width: min(86vw, 1920px);
+      max-height: 1080px;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      background: transparent;
+      position: relative;
+      z-index: 4;
+      opacity: 1 !important;
+    }
+
+    .philosophy {
+      display: grid;
+      grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr);
+      gap: 90px;
+      align-items: center;
+      padding-top: 1vh;
+      translate: 0px -180px;
+    }
+
+    .philo-collage {
+      position: relative;
+      min-height: 720px;
+    }
+
+    .philo-main {
+      width: min(42vw, 650px);
+      height: min(48vw, 810px);
+      object-fit: cover;
+      position: absolute;
+      left: 13%;
+      top: 0;
+      z-index: 2;
+      transform: translate3d(var(--px, 0px), calc(var(--py, 0px) + var(--media-y)), 0);
+    }
+
+    .philo-side {
+      width: min(26vw, 420px);
+      height: min(32vw, 520px);
+      object-fit: cover;
+      position: absolute;
+      left: -10%;
+      bottom: -38%;
+      z-index: 1;
+      transform: translate3d(var(--px, 0px), calc(var(--py, 0px) + var(--media-y)), 0);
+    }
+
+    .philo-copy {
+      text-align: center;
+      width: min(44vw, 670px);
+      justify-self: center;
+    }
+
+    .philo-copy .philo-body+.philo-body {
+      margin-top: 64px;
+    }
+
+    .mission-wrap {
+      display: grid;
+      place-items: start center;
+      min-height: 30vh;
+      padding-top: 0;
+    }
+
+    .mission {
+      text-align: center;
+      width: min(840px, 88vw);
+      transform: translateX(-180px) translateY(var(--text-y));
+      opacity: var(--text-o);
+      will-change: transform, opacity;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-left {
+        width: 62vw;
+      }
+
+      .hero-center {
+        left: 40%;
+        top: 56%;
+        width: 30vw;
+        height: 42vw;
+      }
+
+      .hero-copy {
+        right: 5%;
+        top: 21%;
+        width: 42vw;
+      }
+
+      .philosophy {
+        grid-template-columns: 1fr;
+        gap: 58px;
+      }
+
+      .philo-main {
+        left: 10%;
+        width: 62vw;
+        height: 72vw;
+      }
+
+      .philo-side {
+        left: -3%;
+        bottom: -20%;
+        width: 36vw;
+        height: 46vw;
+      }
+
+      .philo-copy {
+        width: min(84vw, 760px);
+      }
+    }
+
+    @media (max-width: 780px) {
+      .top-nav {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+      }
+
+      .top-link,
+      .top-link:visited {
+        font-size: 13px;
+        padding: 8px 10px;
+      }
+
+      .scene {
+        min-height: 40vh;
+        margin-top: 3vh;
+      }
+
+      .hero-left {
+        width: 100%;
+      }
+
+      .hero-center {
+        left: 42%;
+        top: 66%;
+        width: 44vw;
+        height: 62vw;
+      }
+
+      .hero-copy {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%) translateY(var(--text-y));
+        width: 88vw;
+        top: 24%;
+      }
+
+      .collection-grid {
+        grid-template-columns: repeat(3, minmax(90px, 1fr));
+        row-gap: 24px;
+      }
+
+      .philo-main {
+        left: 8%;
+        width: 68vw;
+        height: 78vw;
+      }
+
+      .philo-side {
+        width: 38vw;
+        height: 48vw;
+      }
+
+      .mission {
+        transform: translateY(var(--text-y));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="lightCursor" class="light-cursor" aria-hidden="true"></div>
+  <div class="top-fade-mask" aria-hidden="true"></div>
+
+  <header class="top-nav">
+    <a class="top-link js-nav" href="/index.html">Brand Intro</a>
+    <div class="brand-lockup">
+      <img src="/Assets/Wordmark.svg" alt="LOEM wordmark">
+    </div>
+    <a class="top-link right" href="#">Look Book</a>
+  </header>
+
+  <main class="story">
+    <p class="page-brand-story">Brand Story</p>
+    <section class="scene scene-collections" data-scene>
+      <div class="hero scene-media">
+        <img class="hero-left" data-parallax="0.05" src="/Assets/260421_NEAET0428_001-02 6.png" alt="">
+        <img class="hero-center" data-parallax="0.62" src="/Assets/Commission Studio The Harmonist Candles 1 1.png"
+          alt="">
+      </div>
+      <div class="hero-copy scene-text">
+        <p class="eyebrow">What we do<br>[ADD CHINESE]</p>
+        <p class="hero-body">We design everyday objects and<br>ready-to-wear essentials that<br>bring fluidity to modern
+          living.</p>
+      </div>
+    </section>
+
+    <section class="scene" data-scene>
+      <div class="philosophy">
+        <div class="philo-copy scene-text">
+          <p class="eyebrow">Our Philosophy<br>我们的理念</p>
+          <p class="philo-body">Guided by Eastern Zen philosophies,<br>we believe in life elevated by flow.</p>
+          <p class="philo-body">A way of moving through the world<br>where energy moves freely and
+            instinctively.<br>Daily routines are transformed,<br>new possibilities emerge.</p>
+        </div>
+        <div class="philo-collage scene-media">
+          <img class="philo-main" data-parallax="0.28" src="/Assets/original_b7d2b5f487323ae4b619776d5f5c4556 1.png"
+            alt="">
+          <img class="philo-side" data-parallax="0.62" src="/Assets/e43fda12-4792-434d-8942-bc44fea8206f 2.png" alt="">
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene>
+      <div class="mission-wrap">
+        <section class="mission scene-text">
+          <p class="eyebrow">Why we exist<br>我们的使命</p>
+          <p class="mission-body">Each piece is designed to<br>empower effortless movement<br>between places,
+            identities,<br>and emotional states of being.</p>
+        </section>
+      </div>
+    </section>
+
+    <section class="scene" data-scene>
+      <div class="collections scene-text">
+        <p>Our collections</p>
+        <div class="collection-grid">
+          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Core-White%201.png"
+              alt="Loēm Core icon"><span>Loēm Core</span></div>
+          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Sleep-White%201.png"
+              alt="Loēm Sleep icon"><span>Loēm Sleep</span></div>
+          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Skin-White%201.png"
+              alt="Loēm Skin icon"><span>Loēm Skin</span></div>
+          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Jewellery-White%201.png"
+              alt="Loēm Jewellery icon"><span>Loēm Jewellery</span></div>
+          <div class="collection-item"><img src="/Assets/Loem-ProductRangeIcons-Objects-White%201.png"
+              alt="Loēm Objects icon"><span>Loēm Objects</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene em-video-section" data-scene>
+      <div class="em-video-wrap">
+        <video id="emWhiteVideo" class="em-video" preload="auto" playsinline webkit-playsinline muted>
+          <source src="/Assets/Em-White.mov" type="video/quicktime">
+        </video>
+        <p class="em-video-caption">THE FLOW STATES WE EMBRACE</p>
+      </div>
+    </section>
+
+    <section class="scene flow-video-section" data-scene>
+      <video class="flow-video js-flow-video" preload="auto" playsinline webkit-playsinline muted autoplay loop>
+        <source src="/Assets/PRESENCE-01.mp4" type="video/mp4">
+      </video>
+    </section>
+
+    <section class="scene flow-video-section" data-scene>
+      <video class="flow-video js-flow-video" preload="auto" playsinline webkit-playsinline muted autoplay loop>
+        <source src="/Assets/CONNECTION-01.mp4" type="video/mp4">
+      </video>
+    </section>
+
+    <section class="scene flow-video-section" data-scene>
+      <video class="flow-video js-flow-video" preload="auto" playsinline webkit-playsinline muted autoplay loop>
+        <source src="/Assets/ENERGY-01.mp4" type="video/mp4">
+      </video>
+    </section>
+
+    <section class="scene flow-video-section" data-scene>
+      <video class="flow-video js-flow-video" preload="auto" playsinline webkit-playsinline muted autoplay loop>
+        <source src="/Assets/EXPANSION-01.mp4" type="video/mp4">
+      </video>
+    </section>
+  </main>
+
+  <script>
+    const lightCursor = document.getElementById('lightCursor');
+    const scenes = Array.from(document.querySelectorAll('[data-scene]'));
+    const parallaxImages = Array.from(document.querySelectorAll('[data-parallax]'));
+    const collectionItems = Array.from(document.querySelectorAll('.collection-item'));
+    const emWhiteVideo = document.getElementById('emWhiteVideo');
+    const emVideoSection = document.querySelector('.em-video-section');
+    const flowVideos = Array.from(document.querySelectorAll('.js-flow-video'));
+    const pointer = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+    let emVideoPlayedOnce = false;
+    let emWasInSection = false;
+    let emPlayPending = false;
+
+    function playEmVideoOnceWhenReady() {
+      if (!emWhiteVideo || emVideoPlayedOnce || emPlayPending) return;
+      emPlayPending = true;
+
+      const doPlay = () => {
+        emWhiteVideo.currentTime = 0;
+        emWhiteVideo.play()
+          .then(() => {
+            emVideoPlayedOnce = true;
+            emPlayPending = false;
+          })
+          .catch(() => {
+            emPlayPending = false;
+          });
+      };
+
+      if (emWhiteVideo.readyState >= 2) {
+        doPlay();
+      } else {
+        const onReady = () => {
+          emWhiteVideo.removeEventListener('loadeddata', onReady);
+          doPlay();
+        };
+        emWhiteVideo.addEventListener('loadeddata', onReady, { once: true });
+        emWhiteVideo.load();
+      }
+    }
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function smoothstep(v) { const t = clamp(v, 0, 1); return t * t * (3 - 2 * t); }
+
+    function updateLightCursorPosition(clientX, clientY) {
+      lightCursor.style.left = `${clientX}px`;
+      lightCursor.style.top = `${clientY}px`;
+    }
+
+    window.addEventListener('mousemove', (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      updateLightCursorPosition(event.clientX, event.clientY);
+      lightCursor.classList.add('is-visible');
+    }, { passive: true });
+
+    window.addEventListener('mouseenter', (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      updateLightCursorPosition(event.clientX, event.clientY);
+      lightCursor.classList.add('is-visible');
+    }, { passive: true });
+
+    window.addEventListener('mouseleave', () => {
+      lightCursor.classList.remove('is-visible');
+    }, { passive: true });
+
+    function updateScenesAndParallax(now) {
+      const vh = window.innerHeight || 1;
+      const vw = window.innerWidth || 1;
+      const t = now * 0.001;
+
+      scenes.forEach((scene, sceneIndex) => {
+        const rect = scene.getBoundingClientRect();
+        const local = clamp((vh - rect.top) / (vh + rect.height), 0, 1);
+
+        // Text arrives earlier than image.
+        const textIn = smoothstep((local - 0.07) / 0.36);
+        const textOut = smoothstep((local - 0.62) / 0.34);
+        const textVisible = textIn * (1 - textOut);
+        const textEntryStart = sceneIndex === 0 ? 320 : 220;
+        const textY = (1 - textIn) * textEntryStart - textOut * 210;
+
+        const imgIn = smoothstep((local - 0.18) / 0.38);
+        const imgOut = smoothstep((local - 0.62) / 0.32);
+        const imgVisible = imgIn * (1 - imgOut);
+        const imgY = (1 - imgIn) * 300 - imgOut * 260;
+
+        scene.style.setProperty('--text-y', `${textY.toFixed(2)}px`);
+        scene.style.setProperty('--text-o', `${textVisible.toFixed(3)}`);
+        scene.style.setProperty('--media-y', `${imgY.toFixed(2)}px`);
+        scene.style.setProperty('--media-o', `${imgVisible.toFixed(3)}`);
+      });
+
+      const collectionScene = document.querySelector('.collections')?.closest('[data-scene]');
+      if (collectionScene && collectionItems.length) {
+        const rect = collectionScene.getBoundingClientRect();
+        const local = clamp((vh - rect.top) / (vh + rect.height), 0, 1);
+        const revealProgress = smoothstep((local - 0.08) / 0.66);
+
+        collectionItems.forEach((item, index) => {
+          const threshold = 0.28 + (index / Math.max(1, collectionItems.length - 1)) * 0.34;
+          item.classList.toggle('is-visible', revealProgress >= threshold);
+        });
+      }
+
+      parallaxImages.forEach((img, idx) => {
+        const depth = Number(img.dataset.parallax || 0.2);
+        const isHeroLeft = img.classList.contains('hero-left');
+        const isHeroCenter = img.classList.contains('hero-center');
+        const isPhiloMain = img.classList.contains('philo-main');
+        const isPhiloSide = img.classList.contains('philo-side');
+        const rect = img.getBoundingClientRect();
+        const centerY = rect.top + rect.height * 0.5;
+        const centerOffset = (centerY - vh * 0.5) / vh;
+
+        const moveBoost = isPhiloSide
+          ? 2.8
+          : isPhiloMain
+            ? 1.45
+            : isHeroCenter
+              ? 2.2
+              : isHeroLeft
+                ? 0.45
+                : 1;
+        const flowBoost = isPhiloSide
+          ? 2.5
+          : isPhiloMain
+            ? 1.35
+            : isHeroCenter
+              ? 2.4
+              : isHeroLeft
+                ? 0.4
+                : 1;
+        const xDir = isPhiloSide ? 1 : isPhiloMain ? -1 : isHeroCenter ? 1 : isHeroLeft ? -1 : 1;
+
+        const scrollShiftY = -centerOffset * depth * 130 * moveBoost;
+        const mouseShiftX = 0;
+        const mouseShiftY = 0;
+        const flowX = Math.sin(t * 0.6 + idx * 1.37) * depth * 5.5 * flowBoost * xDir;
+        const flowY = Math.cos(t * 0.73 + idx * 1.11) * depth * 7.5 * flowBoost;
+
+        img.style.setProperty('--px', `${(mouseShiftX + flowX).toFixed(2)}px`);
+        img.style.setProperty('--py', `${(scrollShiftY + mouseShiftY + flowY).toFixed(2)}px`);
+      });
+
+      if (emWhiteVideo && emVideoSection) {
+        const rect = emVideoSection.getBoundingClientRect();
+        const inSection = rect.top < vh * 0.72 && rect.bottom > vh * 0.28;
+
+        // Same pattern as index: trigger only on section entry, play once.
+        if (inSection && !emWasInSection && !emVideoPlayedOnce) {
+          playEmVideoOnceWhenReady();
+        }
+        emWasInSection = inSection;
+      }
+
+      requestAnimationFrame(updateScenesAndParallax);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => document.body.classList.add('page-in'));
+      requestAnimationFrame(updateScenesAndParallax);
+
+      if (emWhiteVideo) {
+        emWhiteVideo.load();
+        emWhiteVideo.pause();
+        emWhiteVideo.currentTime = 0;
+      }
+
+      flowVideos.forEach((video) => {
+        video.load();
+        const tryPlay = () => video.play().catch(() => {});
+        video.addEventListener('canplay', tryPlay, { once: true });
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              tryPlay();
+            } else {
+              video.pause();
+            }
+          });
+        }, { threshold: 0.35 });
+        observer.observe(video);
+      });
+    });
+
+    document.querySelectorAll('.js-nav').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const href = link.getAttribute('href');
+        if (!href) return;
+        event.preventDefault();
+        document.body.classList.add('page-out');
+        setTimeout(() => { window.location.href = href; }, 520);
+      });
+    });
+  </script>
+</body>
+
+</html>

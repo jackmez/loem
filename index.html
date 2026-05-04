@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIFE</title>
+    <style>
+        @font-face {
+            font-family: "Test Martina Plantijn";
+            src: url("/fonts/TestMartinaPlantijn-Light.otf") format("opentype");
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: "Greed Condensed";
+            src: url("/fonts/Greed%20Condensed/GreedCondensed-TRIAL-SemiBold.otf") format("opentype");
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: #FFFAF3;
+            overflow: hidden;
+            cursor: none;
+            opacity: 0;
+            transition: opacity 620ms ease;
+        }
+
+        body.page-in {
+            opacity: 1;
+        }
+
+        body.page-out {
+            opacity: 0;
+        }
+
+        canvas {
+            position: fixed;
+            inset: 0;
+            display: block;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .grain-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.12;
+            mix-blend-mode: multiply;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23000000' fill-opacity='0.24'%3E%3Ccircle cx='8' cy='14' r='0.6'/%3E%3Ccircle cx='27' cy='56' r='0.55'/%3E%3Ccircle cx='44' cy='19' r='0.5'/%3E%3Ccircle cx='61' cy='92' r='0.65'/%3E%3Ccircle cx='79' cy='33' r='0.6'/%3E%3Ccircle cx='98' cy='74' r='0.5'/%3E%3Ccircle cx='113' cy='41' r='0.55'/%3E%3Ccircle cx='14' cy='103' r='0.6'/%3E%3Ccircle cx='37' cy='87' r='0.55'/%3E%3Ccircle cx='54' cy='67' r='0.5'/%3E%3Ccircle cx='72' cy='12' r='0.65'/%3E%3Ccircle cx='90' cy='101' r='0.5'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 120px 120px;
+            background-repeat: repeat;
+        }
+
+        .light-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            transform: translate(-50%, -50%);
+            background: url("Assets/landing-cursor.png") center / contain no-repeat;
+            mix-blend-mode: color-dodge;
+            filter: blur(2px);
+            opacity: 0;
+            transition: opacity 220ms ease;
+        }
+
+        .light-cursor.is-visible {
+            opacity: 1;
+        }
+
+        .scroll-snap {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .scroll-snap::-webkit-scrollbar {
+            display: none;
+        }
+
+        .snap-section {
+            min-height: 100vh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+
+        .top-chrome {
+            position: fixed;
+            top: 52px;
+            left: 28px;
+            right: 28px;
+            z-index: 4;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            pointer-events: none;
+            opacity: 1;
+            transform: translateY(0);
+            transition: transform 360ms ease, opacity 320ms ease;
+        }
+
+        .top-chrome.is-hidden {
+            opacity: 0;
+            transform: translateY(-18px);
+            pointer-events: none;
+        }
+
+        .top-chrome__slot {
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .top-chrome__slot--left {
+            justify-content: flex-start;
+        }
+
+        .top-chrome__slot--center {
+            justify-content: center;
+        }
+
+        .top-chrome__slot--right {
+            justify-content: flex-end;
+        }
+
+        .top-chrome__btn {
+            border: 0;
+            background: transparent;
+            color: #131313;
+            font-family: "Greed Condensed", "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            padding: 10px 14px;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: color 180ms ease;
+        }
+
+        .top-chrome__btn:hover {
+            color: #ff9d00;
+        }
+
+        .top-chrome__logo {
+            width: clamp(80px, 9.5vw, 140px);
+            height: auto;
+            display: block;
+            pointer-events: none;
+        }
+
+        .final-actions {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, 16px);
+            z-index: 4;
+            display: flex;
+            gap: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 320ms ease, opacity 280ms ease;
+        }
+
+        .final-actions.is-visible {
+            transform: translate(-50%, 0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .final-actions__btn {
+            min-width: 180px;
+            height: 48px;
+            border: 0;
+            background: transparent;
+            color: #151515;
+            font-family: "Greed Condensed", "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color 180ms ease;
+        }
+
+        .final-actions__btn:hover {
+            color: #ff9d00;
+            
+        }
+
+        @media (max-width: 700px) {
+            .top-chrome {
+                top: 12px;
+                left: 12px;
+                right: 12px;
+            }
+
+            .top-chrome__btn {
+                font-size: 13px;
+                padding: 8px 10px;
+            }
+
+            .top-chrome__logo {
+                width: clamp(55px, 17vw, 80px);
+            }
+
+            .final-actions {
+                width: calc(100% - 24px);
+                gap: 10px;
+            }
+
+            .final-actions__btn {
+                min-width: 0;
+                flex: 1 1 0;
+                height: 42px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="c"></canvas>
+    <div class="grain-overlay" aria-hidden="true"></div>
+    <div id="lightCursor" class="light-cursor" aria-hidden="true"></div>
+        <div id="topChrome" class="top-chrome" aria-hidden="false">
+            <div class="top-chrome__slot top-chrome__slot--left">
+                <button id="brandStoryTopBtn" class="top-chrome__btn" type="button">Brand Story</button>
+            </div>
+        <div class="top-chrome__slot top-chrome__slot--center">
+            <img class="top-chrome__logo" src="Assets/Wordmark.svg" alt="Loem wordmark">
+        </div>
+        <div class="top-chrome__slot top-chrome__slot--right">
+            <button class="top-chrome__btn" type="button">Look Book</button>
+        </div>
+    </div>
+    <div id="finalActions" class="final-actions" aria-hidden="true">
+        <button id="brandStoryFinalBtn" class="final-actions__btn" type="button">Brand Story</button>
+        <button class="final-actions__btn" type="button">Brand in Action</button>
+    </div>
+    <div id="scrollSnap" class="scroll-snap" aria-hidden="true">
+        <section class="snap-section"></section>
+        <section class="snap-section"></section>
+        <section class="snap-section"></section>
+        <section class="snap-section"></section>
+        <section class="snap-section"></section>
+        <section class="snap-section"></section>
+        <section class="snap-section"></section>
+    </div>
+    <script>
+        const SECTION_TITLES = [
+            "Section 1",
+            "Section 2",
+            "Section 3",
+            "Section 4",
+            "Section 5",
+            "Section 6",
+        ];
+
+        const canvas = document.getElementById('c');
+        const lightCursor = document.getElementById('lightCursor');
+        const scrollSnap = document.getElementById('scrollSnap');
+        const topChrome = document.getElementById('topChrome');
+        const finalActions = document.getElementById('finalActions');
+        const brandStoryTopBtn = document.getElementById('brandStoryTopBtn');
+        const brandStoryFinalBtn = document.getElementById('brandStoryFinalBtn');
+        const ctx = canvas.getContext('2d');
+
+        function navigateWithDissolve(href) {
+            document.body.classList.add('page-out');
+            setTimeout(() => {
+                window.location.href = href;
+            }, 520);
+        }
+
+        // Keep section count in sync with titles.
+        scrollSnap.innerHTML = SECTION_TITLES
+            .map((title) => `<section class="snap-section" aria-label="${title}"></section>`)
+            .join('');
+
+        let W = 0;
+        let H = 0;
+        let cx = 0;
+        let cy = 0;
+        let scrollProgress = 0;
+        let renderProgress = 0;
+        let bgProgress = 0;
+        let targetSpin = 0;
+        let currentSpin = 0;
+        let idleTime = 0;
+
+        const BASE_IMAGE_PATHS = [
+            "Assets/new_image_landing/Frame 2090055623.png",
+            "Assets/new_image_landing/Frame 2090055627.png",
+            "Assets/new_image_landing/Frame 2090055634.png",
+            "Assets/new_image_landing/Frame 2090055643.png",
+            "Assets/new_image_landing/Frame 2090055661.png",
+            "Assets/new_image_landing/Screenshot 2026-04-21 at 10.39.14 2.png",
+            "Assets/new_image_landing/e43fda12-4792-434d-8942-bc44fea8206f 2.png",
+            "Assets/new_image_landing/loreworld_1768413242_3810047991433109308_65923060496 9.png",
+            "Assets/new_image_landing/marvin-leuvrey_stills_025 4.png",
+            "Assets/new_image_landing/samuelpasquier_1691943848_3168577116093411413_9420069 5.png",
+        ];
+        const CENTER_VIDEO_PATH = "Assets/Loem-Black.mov";
+        const CENTER_VIDEO_FALLBACK_PATH = "Assets/A-Black.mp4";
+        const CENTER_STEPS = [
+            { type: 'text', text: "A modern living practice," },
+            { type: 'text', text: "redefining daily essentials—for flow." },
+            { type: 'text', text: "Where the mind awakens," },
+            { type: 'text', text: "the self dissolves," },
+            { type: 'text', text: "And everything moves effortlessly." },
+            { type: 'video', videoPath: CENTER_VIDEO_PATH },
+        ];
+        const CENTER_SLIDE_DISTANCE_RATIO = 0.36;
+        const BG_PALETTE = {
+            blue: '#B4BCFF',
+            yellow: '#FDBC05',
+            offWhite: '#FFFAF3',
+        };
+        const BG_STEPS = [
+            { accent: BG_PALETTE.yellow, alpha: 0.04, pos: 18 },
+            { accent: BG_PALETTE.yellow, alpha: 0.28, pos: 28 },
+            { accent: BG_PALETTE.blue, alpha: 0.36, pos: 42 },
+            { accent: BG_PALETTE.blue, alpha: 0.30, pos: 58 },
+            { accent: BG_PALETTE.yellow, alpha: 0.22, pos: 74 },
+            { accent: BG_PALETTE.offWhite, alpha: 0.06, pos: 82 },
+        ];
+
+        const CARDS_PER_SECTION = 10;
+        const SECTION_COUNT = SECTION_TITLES.length;
+        const TOTAL_TURNS = 0.3;
+        const TILT_X = 14 * Math.PI / 180;
+        const PHASE_PER_SECTION = Math.PI * 0.4;
+        const CENTER_DEPTH = 0.5;
+        const MAX_OPACITY = 0.8;
+        const MIN_CARD_VISIBILITY = 0.54;
+        const MAX_CARD_VISIBILITY = 0.98;
+        const PROGRESS_LERP_BASE = 0.86;
+        const BG_PROGRESS_LERP_BASE = 0.97;
+        const SPIN_LERP_BASE = 0.88;
+        const WORLD_RADIUS = 0.57;
+        const HORIZONTAL_SPREAD = 1.9;
+        const CARD_SIZE_BOOST = 1.68;
+        const CORNER_BOOST_X_STRONG = 1.28;
+        const CORNER_BOOST_Y_STRONG = 1.18;
+        const CORNER_BOOST_X_SOFT = 1.14;
+        const CORNER_BOOST_Y_SOFT = 1.08;
+        const PHI = Math.PI * (3 - Math.sqrt(5));
+        const cosT = Math.cos(TILT_X);
+        const sinT = Math.sin(TILT_X);
+
+        function smoothstep(v) {
+            const t = Math.max(0, Math.min(1, v));
+            return t * t * (3 - 2 * t);
+        }
+
+        function clamp(v, min, max) {
+            return Math.max(min, Math.min(max, v));
+        }
+
+        function hexToRgb(hex) {
+            const value = hex.replace('#', '').trim();
+            const normalized = value.length === 3
+                ? value.split('').map((ch) => ch + ch).join('')
+                : value;
+            const intVal = Number.parseInt(normalized, 16);
+            return {
+                r: (intVal >> 16) & 255,
+                g: (intVal >> 8) & 255,
+                b: intVal & 255,
+            };
+        }
+
+        function mixColor(aHex, bHex, t) {
+            const a = hexToRgb(aHex);
+            const b = hexToRgb(bHex);
+            return {
+                r: Math.round(a.r + (b.r - a.r) * t),
+                g: Math.round(a.g + (b.g - a.g) * t),
+                b: Math.round(a.b + (b.b - a.b) * t),
+            };
+        }
+
+        function toRgba(color, alpha) {
+            return `rgba(${color.r}, ${color.g}, ${color.b}, ${clamp(alpha, 0, 1).toFixed(3)})`;
+        }
+
+        function updateDynamicBackground(nowMs = performance.now()) {
+            const time = nowMs * 0.001;
+            const cycle = (time * 0.12) % (BG_STEPS.length - 1);
+            const fromIndex = clamp(Math.floor(cycle), 0, BG_STEPS.length - 1);
+            const toIndex = Math.min(fromIndex + 1, BG_STEPS.length - 1);
+            const t = smoothstep(cycle - fromIndex);
+            const from = BG_STEPS[fromIndex];
+            const to = BG_STEPS[toIndex];
+
+            const base = hexToRgb(BG_PALETTE.offWhite);
+            const accent = mixColor(from.accent, to.accent, t);
+            const alphaBase = from.alpha + (to.alpha - from.alpha) * t;
+            const posBase = from.pos + (to.pos - from.pos) * t;
+
+            // Gentle autonomous "light" motion, independent from scroll.
+            const pulse = Math.sin(time * 0.32);
+            const shimmer = Math.cos(time * 0.21 + 1.1);
+            const pos = posBase + pulse * 4.2 + shimmer * 1.6;
+            const alpha = clamp(alphaBase + pulse * 0.06 + shimmer * 0.03, 0, 1);
+            const tailPos = clamp(pos + 28 + pulse * 3.5, 0, 100);
+
+            document.body.style.background = `linear-gradient(90deg, ${toRgba(base, 1)} 0%, ${toRgba(accent, alpha)} ${pos.toFixed(2)}%, ${toRgba(accent, alpha * 0.55)} ${tailPos.toFixed(2)}%, ${toRgba(base, 1)} 100%)`;
+        }
+
+        function resize() {
+            const dpr = window.devicePixelRatio || 1;
+            W = window.innerWidth;
+            H = window.innerHeight;
+            canvas.width = W * dpr;
+            canvas.height = H * dpr;
+            canvas.style.width = `${W}px`;
+            canvas.style.height = `${H}px`;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            cx = W / 2;
+            cy = H / 2;
+        }
+
+        function updateScrollProgress() {
+            const max = Math.max(1, scrollSnap.scrollHeight - scrollSnap.clientHeight);
+            scrollProgress = scrollSnap.scrollTop / max;
+        }
+
+        function sectionPhase(index) {
+            return index * PHASE_PER_SECTION;
+        }
+
+        function updateFinalActions(sectionFloat) {
+            const threshold = SECTION_TITLES.length - 1.05;
+            const inFinalZone = sectionFloat >= threshold;
+
+            if (inFinalZone && !finalActionsReady) {
+                if (finalActionsDelayConsumed) {
+                    finalActionsReady = true;
+                } else if (!finalActionsDelayStarted) {
+                    finalActionsDelayStarted = true;
+                    finalActionsDelayTimer = setTimeout(() => {
+                        finalActionsReady = true;
+                        finalActionsDelayConsumed = true;
+                    }, 2000);
+                }
+            }
+
+            if (!inFinalZone) {
+                finalActionsReady = false;
+                finalActionsDelayStarted = false;
+                if (finalActionsDelayTimer) {
+                    clearTimeout(finalActionsDelayTimer);
+                    finalActionsDelayTimer = null;
+                }
+            }
+
+            const isVisible = inFinalZone && finalActionsReady;
+            finalActions.classList.toggle('is-visible', isVisible);
+            finalActions.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+        }
+
+        function updateFinalActionsPosition() {
+            // Keep CTA row anchored right under the final center logo.
+            const targetH = clamp(H * 0.144, 54, 144);
+            const y = cy + targetH / 2 + clamp(H * 0.055, 26, 56);
+            finalActions.style.top = `${Math.round(y)}px`;
+        }
+
+        function updateTopChrome(sectionFloat) {
+            const threshold = SECTION_TITLES.length - 1.05;
+            const isHidden = sectionFloat >= threshold;
+            topChrome.classList.toggle('is-hidden', isHidden);
+            topChrome.setAttribute('aria-hidden', isHidden ? 'true' : 'false');
+        }
+
+        function createImageAsset(path) {
+            const img = new Image();
+            img.decoding = 'async';
+            img.loading = 'eager';
+            img.src = encodeURI(path);
+            return img;
+        }
+
+        const baseAssets = BASE_IMAGE_PATHS.map((path) => createImageAsset(path));
+        const centerVideoAsset = document.createElement('video');
+        centerVideoAsset.src = CENTER_VIDEO_PATH;
+        centerVideoAsset.muted = true;
+        centerVideoAsset.playsInline = true;
+        centerVideoAsset.preload = 'auto';
+        centerVideoAsset.loop = false;
+        centerVideoAsset.addEventListener('error', () => {
+            if (centerVideoAsset.src.includes(CENTER_VIDEO_FALLBACK_PATH)) return;
+            centerVideoAsset.src = CENTER_VIDEO_FALLBACK_PATH;
+            centerVideoAsset.load();
+        });
+
+        let wasInLastSection = false;
+        let centerVideoHasPlayedOnce = false;
+        let finalActionsReady = false;
+        let finalActionsDelayStarted = false;
+        let finalActionsDelayTimer = null;
+        let finalActionsDelayConsumed = false;
+        const videoKeyCanvas = document.createElement('canvas');
+        const videoKeyCtx = videoKeyCanvas.getContext('2d', { willReadFrequently: true });
+
+        const particles = Array.from({ length: CARDS_PER_SECTION }, (_, i) => {
+            // Use midpoint sampling so first/last cards are not stuck on the poles.
+            const y = 1 - ((i + 0.5) / CARDS_PER_SECTION) * 2;
+            const r = Math.sqrt(Math.max(0, 1 - y * y));
+            const theta = PHI * i;
+            const baseW = 148 + (i % 4) * 16;
+            const baseH = baseW * (1.25 + (i % 3) * 0.08);
+            const edgeSeed = (i * 17 + 11) % 12;
+            let orbitX = 1;
+            let orbitY = 1;
+            if (edgeSeed < 4) {
+                orbitX = CORNER_BOOST_X_STRONG;
+                orbitY = CORNER_BOOST_Y_STRONG;
+            } else if (edgeSeed < 7) {
+                orbitX = CORNER_BOOST_X_SOFT;
+                orbitY = CORNER_BOOST_Y_SOFT;
+            }
+            return {
+                x: r * Math.cos(theta),
+                y: y * 0.66,
+                z: r * Math.sin(theta),
+                baseW,
+                baseH,
+                orbitX,
+                orbitY,
+                slot: i,
+            };
+        });
+
+        const baseMediaOrder = (() => {
+            const total = baseAssets.length;
+            return Array.from({ length: CARDS_PER_SECTION }, (_, slot) => {
+                const imageIndex = slot % total;
+                return {
+                    img: baseAssets[imageIndex],
+                    assetPath: BASE_IMAGE_PATHS[imageIndex],
+                    flipX: (slot % 3) === 0,
+                    flipY: (slot % 5) === 0,
+                    label: String(slot + 1).padStart(2, '0'),
+                };
+            });
+        })();
+
+        function createSectionMedia() {
+            const media = baseMediaOrder.map((item) => ({ ...item }));
+            if (media[0]) {
+                media[0] = {
+                    ...media[0],
+                    flipX: false,
+                    flipY: false,
+                };
+            }
+            if (media[3]) {
+                media[3] = {
+                    ...media[3],
+                    flipX: false,
+                    flipY: false,
+                };
+            }
+            if (media[2]) {
+                media[2] = {
+                    ...media[2],
+                    shiftXPx: -300,
+                };
+            
+         
+            }
+            if (media[6]) {
+                media[6] = {
+                    ...media[6],
+                    shiftXPx: 620,
+                    shiftYPx: -70,
+                };
+            }
+            // Keep this one non-mirrored.
+            media.forEach((entry, index) => {
+                if (entry.assetPath && entry.assetPath.includes('Frame 2090055643.png')) {
+                    media[index] = {
+                        ...entry,
+                        flipX: false,
+                        flipY: false,
+                    };
+                }
+            });
+            return media;
+        }
+
+        const sectionMedia = SECTION_TITLES.map(() => createSectionMedia());
+
+        function drawCard(media, sx, sy, w, h, opacity, blur) {
+            if (opacity < 0.01) return;
+            ctx.save();
+            ctx.globalAlpha = opacity;
+            const cardBlur = media.disableBlur ? 0 : blur;
+            if (cardBlur > 0.2) ctx.filter = `blur(${cardBlur.toFixed(2)}px)`;
+            const hw = w / 2;
+            const hh = h / 2;
+            if (!media.transparentBg) {
+                ctx.fillStyle = '#d9d2c8';
+                ctx.fillRect(sx - hw, sy - hh, w, h);
+            }
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(sx - hw, sy - hh, w, h);
+            ctx.clip();
+            const img = media.img;
+            const loaded = img && img.complete && img.naturalWidth > 0;
+            if (loaded) {
+                const s = media.fitMode === 'contain'
+                    ? Math.min(w / img.naturalWidth, h / img.naturalHeight)
+                    : Math.max(w / img.naturalWidth, h / img.naturalHeight);
+                const drawW = img.naturalWidth * s;
+                const drawH = img.naturalHeight * s;
+
+                if (media.flipX || media.flipY) {
+                    ctx.translate(sx, sy);
+                    ctx.scale(media.flipX ? -1 : 1, media.flipY ? -1 : 1);
+                    ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+                } else {
+                    ctx.drawImage(img, sx - drawW / 2, sy - drawH / 2, drawW, drawH);
+                }
+            } else {
+                ctx.fillStyle = media.transparentBg ? 'rgba(255,255,255,0.35)' : '#c8c1b6';
+                ctx.fillRect(sx - hw, sy - hh, w, h);
+                if (media.transparentBg) {
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.24)';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(sx - hw, sy - hh, w, h);
+                }
+            }
+
+            ctx.restore();
+            ctx.restore();
+        }
+
+        function drawBadgeOverlay(media, sx, sy, w, h, opacity) {
+            return;
+        }
+
+        function projectLayer(sectionIndex, spinRad, phaseOffset, layerAlpha, idleAmount) {
+            const cosS = Math.cos(spinRad + phaseOffset);
+            const sinS = Math.sin(spinRad + phaseOffset);
+            const R = Math.min(W, H) * WORLD_RADIUS;
+
+            return particles.map((p) => {
+                const rx = p.x * cosS - p.z * sinS;
+                const ry = p.y;
+                const rz = p.x * sinS + p.z * cosS;
+                const fy = ry * cosT - rz * sinT;
+                const fz = ry * sinT + rz * cosT;
+
+                const rawSx = cx + rx * R * HORIZONTAL_SPREAD * p.orbitX;
+                const rawSy = cy + fy * R * p.orbitY;
+                const depth = (fz + 1) / 2;
+                const media = sectionMedia[sectionIndex][p.slot];
+                const shiftX = ((media.shiftXRatio || 0) * W) + (media.shiftXPx || 0);
+                const shiftY = ((media.shiftYRatio || 0) * H) + (media.shiftYPx || 0);
+                const mediaScale = media.scale || 1;
+                const sizeF = (0.38 + depth * 0.95) * CARD_SIZE_BOOST;
+                const w = p.baseW * sizeF * mediaScale;
+                const h = p.baseH * sizeF * mediaScale;
+                const slotSeed = p.slot * 0.91 + 0.37;
+                const idleWaveX = Math.sin(idleTime * 0.55 + slotSeed) * clamp(W * 0.0038, 2.5, 8) * idleAmount;
+                const idleWaveY = Math.cos(idleTime * 0.62 + slotSeed * 1.3) * clamp(H * 0.0042, 2.5, 8) * idleAmount;
+                const sx = rawSx + shiftX + idleWaveX;
+                const sy = rawSy + shiftY + idleWaveY;
+
+                const boostedDepth = clamp(depth + (media.layerBoost || 0), 0, 1);
+                const renderDepth = media.forceFront ? 2 + boostedDepth : boostedDepth;
+                const nt = smoothstep(boostedDepth);
+                const visibility = MIN_CARD_VISIBILITY + (MAX_CARD_VISIBILITY - MIN_CARD_VISIBILITY) * nt;
+                const baseOpacity = visibility * MAX_OPACITY;
+                const opacity = clamp((media.forceOpacity ?? baseOpacity) * layerAlpha, 0, 1);
+                const blur = (1 - nt) * 1.3;
+
+                return {
+                    sx,
+                    sy,
+                    w,
+                    h,
+                    depth: renderDepth,
+                    opacity,
+                    blur,
+                    media,
+                };
+            });
+        }
+
+        function onScroll() {
+            updateScrollProgress();
+        }
+
+        function updateLightCursorPosition(clientX, clientY) {
+            lightCursor.style.left = `${clientX}px`;
+            lightCursor.style.top = `${clientY}px`;
+        }
+
+        window.addEventListener('mousemove', (event) => {
+            updateLightCursorPosition(event.clientX, event.clientY);
+            lightCursor.classList.add('is-visible');
+        }, { passive: true });
+
+        window.addEventListener('mouseenter', (event) => {
+            updateLightCursorPosition(event.clientX, event.clientY);
+            lightCursor.classList.add('is-visible');
+        }, { passive: true });
+
+        window.addEventListener('mouseleave', () => {
+            lightCursor.classList.remove('is-visible');
+        }, { passive: true });
+
+        brandStoryTopBtn?.addEventListener('click', () => {
+            navigateWithDissolve('/brand-story.html');
+        });
+        brandStoryFinalBtn?.addEventListener('click', () => {
+            navigateWithDissolve('/brand-story.html');
+        });
+
+        function buildCenteredLines(text, maxWidth) {
+            const words = text.split(/\s+/);
+            let line = '';
+            const lines = [];
+            for (let i = 0; i < words.length; i += 1) {
+                const testLine = line ? `${line} ${words[i]}` : words[i];
+                if (ctx.measureText(testLine).width > maxWidth && line) {
+                    lines.push(line);
+                    line = words[i];
+                } else {
+                    line = testLine;
+                }
+            }
+            if (line) {
+                lines.push(line);
+            }
+            return lines;
+        }
+
+        function drawCenterStep(step, centerX, alpha) {
+            if (!step || alpha < 0.01) return;
+            ctx.save();
+            ctx.globalAlpha = clamp(alpha, 0, 1);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'rgba(17, 17, 17, 0.98)';
+            ctx.shadowColor = 'rgba(0,0,0,0.08)';
+            ctx.shadowBlur = 8;
+
+            if (step.type === 'video') {
+                const video = centerVideoAsset;
+                const loaded = video && video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0;
+                if (loaded) {
+                    const targetW = clamp(W * 0.32, 180, 460);
+                    const targetH = clamp(H * 0.22, 110, 320);
+                    const scale = Math.min(targetW / video.videoWidth, targetH / video.videoHeight);
+                    const drawW = video.videoWidth * scale;
+                    const drawH = video.videoHeight * scale;
+                    // Key out near-white background so video behaves like alpha.
+                    videoKeyCanvas.width = video.videoWidth;
+                    videoKeyCanvas.height = video.videoHeight;
+                    videoKeyCtx.clearRect(0, 0, videoKeyCanvas.width, videoKeyCanvas.height);
+                    videoKeyCtx.drawImage(video, 0, 0, videoKeyCanvas.width, videoKeyCanvas.height);
+                    const frame = videoKeyCtx.getImageData(0, 0, videoKeyCanvas.width, videoKeyCanvas.height);
+                    const px = frame.data;
+                    for (let i = 0; i < px.length; i += 4) {
+                        const r = px[i];
+                        const g = px[i + 1];
+                        const b = px[i + 2];
+                        const max = Math.max(r, g, b);
+                        const min = Math.min(r, g, b);
+                        const brightness = (r + g + b) / 3;
+                        const saturation = max - min;
+                        if (brightness > 225 && saturation < 36) {
+                            px[i + 3] = 0;
+                        } else if (brightness > 205 && saturation < 52) {
+                            const keep = clamp((225 - brightness) / 20, 0, 1);
+                            px[i + 3] = Math.round(px[i + 3] * keep);
+                        }
+                    }
+                    videoKeyCtx.putImageData(frame, 0, 0);
+                    ctx.drawImage(videoKeyCanvas, centerX - drawW / 2, cy - drawH / 2, drawW, drawH);
+                }
+                ctx.restore();
+                return;
+            }
+
+            const text = (step.text || '').trim();
+            const fontSize = clamp(W * 0.0213, 16, 38);
+            const lineHeight = Math.round(fontSize * 1.1);
+            const maxWidth = clamp(W * 0.72, 320, 1060);
+            ctx.font = `300 ${fontSize}px "Test Martina Plantijn", Georgia, "Times New Roman", serif`;
+            const lines = buildCenteredLines(text, maxWidth);
+            const startY = cy - ((lines.length - 1) * lineHeight) / 2;
+            lines.forEach((line, idx) => {
+                ctx.fillText(line, centerX, startY + idx * lineHeight);
+            });
+            ctx.restore();
+        }
+
+        function drawCenterTransition(currentIndex, nextIndex, mix) {
+            const currentStep = CENTER_STEPS[currentIndex];
+            const nextStep = CENTER_STEPS[nextIndex];
+            const slideDistance = clamp(W * CENTER_SLIDE_DISTANCE_RATIO, 180, 460);
+            const inShift = slideDistance * (1 - mix);
+            const outShift = slideDistance * mix;
+            const currentX = cx - outShift;
+            const nextX = cx + inShift;
+
+            drawCenterStep(currentStep, currentX, 1 - mix);
+            if (nextIndex !== currentIndex) {
+                drawCenterStep(nextStep, nextX, mix);
+            }
+        }
+
+        function drawCenterStepper(sectionFloat) {
+            const totalSteps = SECTION_TITLES.length;
+            if (totalSteps <= 1) return;
+
+            const progress = clamp(sectionFloat / (totalSteps - 1), 0, 1);
+            const fadeOutStart = totalSteps - 1.15;
+            const alpha = sectionFloat >= fadeOutStart
+                ? clamp((totalSteps - 1 - sectionFloat) / (totalSteps - 1 - fadeOutStart), 0, 1)
+                : 1;
+            if (alpha <= 0.001) return;
+            const trackW = clamp(W * 0.12, 110, 230);
+            const trackH = 2;
+            const x = cx - trackW / 2;
+            const y = cy + clamp(H * 0.06, 42, 78);
+            const fillW = Math.max(2, trackW * progress);
+
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
+            ctx.fillRect(x, y, trackW, trackH);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.72)';
+            ctx.fillRect(x, y, fillW, trackH);
+            ctx.restore();
+        }
+
+        function getFinalCardsExitProgress(sectionFloat) {
+            const lastIndex = SECTION_TITLES.length - 1;
+            const start = lastIndex - 0.9;
+            const end = lastIndex;
+            const t = clamp((sectionFloat - start) / Math.max(0.001, end - start), 0, 1);
+            return smoothstep(t);
+        }
+
+        function updateCenterVideoPlayback(sectionFloat) {
+            const lastIndex = SECTION_TITLES.length - 1;
+            const arrivedLastSection = sectionFloat >= lastIndex - 0.02;
+
+            if (arrivedLastSection && !wasInLastSection && !centerVideoHasPlayedOnce) {
+                centerVideoAsset.play()
+                    .then(() => {
+                        centerVideoHasPlayedOnce = true;
+                    })
+                    .catch(() => {});
+            }
+            wasInLastSection = arrivedLastSection;
+        }
+
+        function applyFinalCardsExit(card, exitProgress) {
+            if (exitProgress <= 0.001) return card;
+            const dx = card.sx - cx;
+            const dy = card.sy - cy;
+            const outward = 0.06 + exitProgress * 0.1;
+            const upLift = clamp(H * 0.03, 16, 34) * exitProgress;
+            return {
+                ...card,
+                sx: card.sx + dx * outward * exitProgress,
+                sy: card.sy + dy * outward * exitProgress - upLift,
+                opacity: card.opacity * (1 - exitProgress),
+                blur: card.blur + exitProgress * 1.1,
+            };
+        }
+
+        let lastTime = performance.now();
+        function frame(now) {
+            const dt = Math.min(now - lastTime, 50);
+            lastTime = now;
+
+            const progressLf = 1 - Math.pow(PROGRESS_LERP_BASE, dt / 16.67);
+            renderProgress += (scrollProgress - renderProgress) * progressLf;
+            const bgLf = 1 - Math.pow(BG_PROGRESS_LERP_BASE, dt / 16.67);
+            bgProgress += (scrollProgress - bgProgress) * bgLf;
+            targetSpin = renderProgress * Math.PI * 2 * TOTAL_TURNS;
+            const settleDelta = Math.abs(scrollProgress - renderProgress);
+            const isIdle = settleDelta < 0.0007;
+            idleTime = isIdle ? idleTime + dt * 0.001 : 0;
+            const idleAmount = isIdle ? smoothstep(clamp(idleTime / 0.8, 0, 1)) : 0;
+
+            const spinLf = 1 - Math.pow(SPIN_LERP_BASE, dt / 16.67);
+            currentSpin += (targetSpin - currentSpin) * spinLf;
+
+            const sectionFloat = renderProgress * (SECTION_TITLES.length - 1);
+            const currentIndex = Math.floor(sectionFloat);
+            const nextIndex = Math.min(currentIndex + 1, SECTION_TITLES.length - 1);
+            const mix = smoothstep(sectionFloat - currentIndex);
+            updateFinalActions(sectionFloat);
+            updateFinalActionsPosition();
+            updateTopChrome(sectionFloat);
+            updateCenterVideoPlayback(sectionFloat);
+            updateDynamicBackground(now);
+            const phaseCurrent = sectionPhase(currentIndex);
+            const phaseNext = sectionPhase(nextIndex);
+            const blendedPhase = phaseCurrent + (phaseNext - phaseCurrent) * mix;
+            const allCards = projectLayer(0, currentSpin, blendedPhase, 1, idleAmount).sort((a, b) => a.depth - b.depth);
+            const finalCardsExit = getFinalCardsExitProgress(sectionFloat);
+            const visibleCards = allCards.map((card) => applyFinalCardsExit(card, finalCardsExit));
+
+            ctx.clearRect(0, 0, W, H);
+
+            visibleCards
+                .filter((card) => card.depth < CENTER_DEPTH)
+                .forEach((card) => drawCard(card.media, card.sx, card.sy, card.w, card.h, card.opacity, card.blur));
+
+            drawCenterTransition(currentIndex, nextIndex, mix);
+            drawCenterStepper(sectionFloat);
+
+            visibleCards
+                .filter((card) => card.depth >= CENTER_DEPTH)
+                .forEach((card) => drawCard(card.media, card.sx, card.sy, card.w, card.h, card.opacity, card.blur));
+
+            // Keep numbering always readable on top of everything.
+            visibleCards.forEach((card) => {
+                drawBadgeOverlay(card.media, card.sx, card.sy, card.w, card.h, card.opacity);
+            });
+
+            requestAnimationFrame(frame);
+        }
+
+        resize();
+        updateScrollProgress();
+        renderProgress = scrollProgress;
+        bgProgress = scrollProgress;
+        targetSpin = renderProgress * Math.PI * 2 * TOTAL_TURNS;
+        currentSpin = targetSpin;
+        scrollSnap.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', () => {
+            resize();
+            updateScrollProgress();
+        });
+        scrollSnap.scrollTo({ top: 0, behavior: 'auto' });
+        requestAnimationFrame(() => document.body.classList.add('page-in'));
+        requestAnimationFrame(frame);
+    </script>
+</body>
+
+</html>
