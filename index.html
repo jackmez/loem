@@ -108,10 +108,10 @@
             inset: 0;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.24;
+            opacity: 0.1;
             mix-blend-mode: soft-light;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.46'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23noise)'/%3E%3C/svg%3E");
-            background-size: 180px 180px;
+            background-image: url("/assets/textures/noise.png");
+            background-size: 250px 250px;
             background-repeat: repeat;
             transform: translateZ(0);
         }
@@ -391,6 +391,7 @@
         const initialAssetPromises = [];
         const cardRevealState = { progress: 0 };
         let cardRevealAnimation = null;
+        let lastBackgroundProgress = null;
 
         const BASE_IMAGE_PATHS = [
             "/assets/images/landing/cards/Frame 2090055623.jpg",
@@ -518,7 +519,11 @@
         }
 
         function updateDynamicBackground() {
-            const sceneFloat = clamp(scrollState.bgProgress, 0, 1) * (BG_SCENES.length - 1);
+            const sceneProgress = clamp(scrollState.bgProgress, 0, 1);
+            if (lastBackgroundProgress !== null && Math.abs(sceneProgress - lastBackgroundProgress) < 0.0005) return;
+            lastBackgroundProgress = sceneProgress;
+
+            const sceneFloat = sceneProgress * (BG_SCENES.length - 1);
             const fromIndex = clamp(Math.floor(sceneFloat), 0, BG_SCENES.length - 1);
             const toIndex = Math.min(fromIndex + 1, BG_SCENES.length - 1);
             const scene = blendScene(BG_SCENES[fromIndex], BG_SCENES[toIndex], smoothstep(sceneFloat - fromIndex));
@@ -894,7 +899,7 @@
                 const renderDepth = media.forceFront ? 2 + boostedDepth : boostedDepth;
                 const nt = smoothstep(boostedDepth);
                 const opacity = clamp((media.forceOpacity ?? 1) * layerAlpha, 0, 1);
-                const blur = (1 - nt) * 1.3;
+                const blur = 0;
 
                 return {
                     sx,
@@ -1100,7 +1105,7 @@
                 sx: card.sx + dx * outward * exitProgress,
                 sy: card.sy + dy * outward * exitProgress - upLift,
                 opacity: card.opacity * (1 - exitProgress),
-                blur: card.blur + exitProgress * 1.1,
+                blur: exitProgress * 0.35,
             };
         }
 
