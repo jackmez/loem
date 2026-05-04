@@ -169,7 +169,29 @@ body::-webkit-scrollbar {
 }
 
 .lookbook-page {
+  --site-footer-color: rgba(39, 22, 15, 0.62);
   min-height: 100vh;
+  background: #ede5da;
+  color: #27160f;
+}
+
+.lookbook-page .top-fade-mask {
+  background-image: linear-gradient(
+    180deg,
+    rgba(237, 229, 218, 0.9) 0%,
+    rgba(237, 229, 218, 0.54) 42%,
+    rgba(237, 229, 218, 0.2) 75%,
+    rgba(237, 229, 218, 0) 100%
+  );
+}
+
+.lookbook-page .brand-lockup img {
+  filter: none;
+}
+
+.lookbook-page .top-link--current,
+.lookbook-page .top-link--current:hover {
+  color: #27160f;
 }
 
 .lookbook-shell {
