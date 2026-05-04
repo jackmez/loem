@@ -2,15 +2,20 @@
 
 @font-face {
   font-family: "Test Martina Plantijn";
-  src: url("/assets/fonts/TestMartinaPlantijn-Light.otf") format("opentype");
+  src:
+    url("/assets/fonts/MartinaPlantijn-Light.woff2") format("woff2"),
+    url("/assets/fonts/MartinaPlantijn-Light.woff") format("woff");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Greed Condensed";
-  src: url("/assets/fonts/Greed%20Condensed/GreedCondensed-TRIAL-SemiBold.otf")
-    format("opentype");
+  src:
+    url("/assets/fonts/Greed%20Condensed/GreedCondensed-SemiBold.woff2")
+      format("woff2"),
+    url("/assets/fonts/Greed%20Condensed/GreedCondensed-SemiBold.woff")
+      format("woff");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -33,7 +38,7 @@ body {
 
 body {
   --light-cursor-z: 5;
-  --light-cursor-opacity: 1;
+  --light-cursor-opacity: 0.96;
   background: linear-gradient(
     115deg,
     #ffe9ac 0%,
@@ -42,7 +47,6 @@ body {
     #ced2f1 100%
   );
   overflow: hidden;
-  cursor: none;
   opacity: 0;
   isolation: isolate;
   position: relative;

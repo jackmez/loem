@@ -36,7 +36,8 @@ Always run `npm run build` after code changes. Run `git diff --check` before han
 - `scripts/landing/` - landing constants and pure utilities.
 - `scripts/brand-story.js` - Brand Story and Lookbook runtime.
 - `scripts/shared/` - shared JavaScript modules.
-- `public/assets/` - all served fonts, images, SVGs, videos, and textures.
+- `public/assets/` - served fonts, images, SVGs, videos, and textures.
+- `references/images/` - parked visual references that should not be copied into production builds.
 
 Reference public assets with absolute paths like `/assets/brand/Wordmark.svg`.
 
@@ -45,8 +46,10 @@ Reference public assets with absolute paths like `/assets/brand/Wordmark.svg`.
 The nav is intentionally stable across non-home pages:
 
 - Left: Brand Story
-- Center: LOEM wordmark, linked to `/index.html`
+- Center: LOEM wordmark, linked to `/`
 - Right: Lookbook
+
+Public navigation uses clean URLs: `/`, `/brand-story`, and `/lookbook`. Vercel serves these via `cleanUrls`; local Vite dev and preview use the clean-route middleware in `vite.config.js`.
 
 Do not move nav items around to indicate the current page. Use the current/selected state only.
 

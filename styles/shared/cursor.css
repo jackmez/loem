@@ -12,8 +12,8 @@
     --light-cursor-background,
     radial-gradient(
       closest-side at 50% 50%,
-      rgba(255, 255, 255, 0.68) 0%,
-      rgba(255, 255, 255, 0.36) 42%,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.25) 42%,
       rgba(255, 255, 255, 0) 100%
     )
   );

@@ -3,22 +3,29 @@
 
 @font-face {
   font-family: "Test Martina Plantijn";
-  src: url("/assets/fonts/TestMartinaPlantijn-Light.otf") format("opentype");
+  src:
+    url("/assets/fonts/MartinaPlantijn-Light.woff2") format("woff2"),
+    url("/assets/fonts/MartinaPlantijn-Light.woff") format("woff");
   font-weight: 300;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Test Martina Plantijn";
-  src: url("/assets/fonts/TestMartinaPlantijn-Regular.otf") format("opentype");
+  src:
+    url("/assets/fonts/MartinaPlantijn-Regular.woff2") format("woff2"),
+    url("/assets/fonts/MartinaPlantijn-Regular.woff") format("woff");
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Greed Condensed";
-  src: url("/assets/fonts/Greed%20Condensed/GreedCondensed-TRIAL-SemiBold.otf")
-    format("opentype");
+  src:
+    url("/assets/fonts/Greed%20Condensed/GreedCondensed-SemiBold.woff2")
+      format("woff2"),
+    url("/assets/fonts/Greed%20Condensed/GreedCondensed-SemiBold.woff")
+      format("woff");
   font-weight: 600;
   font-display: swap;
 }
@@ -40,16 +47,15 @@ body {
 body {
   --light-cursor-size: clamp(180px, 22vw, 420px);
   --light-cursor-z: 60;
-  --light-cursor-opacity: 0.82;
+  --light-cursor-opacity: 0.38;
   --light-cursor-opacity-duration: 360ms;
-  --light-cursor-filter: blur(1.5px);
+  --light-cursor-filter: blur(3px);
   --site-footer-color: rgba(255, 255, 255, 0.72);
   --site-footer-z: 50;
   min-height: 100%;
   background: #27160f;
   color: #fff;
   overflow-x: hidden;
-  cursor: none;
   opacity: 0;
   transition: opacity 620ms ease;
   font-family: "Test Martina Plantijn", serif;
@@ -61,6 +67,19 @@ body.page-in {
 
 body.page-out {
   opacity: 0;
+}
+
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  pointer-events: none;
+  opacity: 0.1;
+  mix-blend-mode: soft-light;
+  background-image: url("/assets/textures/noise.png");
+  background-size: 250px 250px;
+  background-repeat: repeat;
+  transform: translateZ(0);
 }
 
 html {

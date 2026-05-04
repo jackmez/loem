@@ -123,8 +123,8 @@ function updateScenesAndParallax(now) {
     const imgOut = smoothstep((local - 0.62) / 0.32);
     const imgVisible = imgIn * (1 - imgOut);
     const imgY = (1 - imgIn) * 300 - imgOut * 260;
-    const flowVideoY = (0.5 - local) * 42;
-    const flowVideoScale = 1.04 - Math.abs(local - 0.5) * 0.028;
+    const flowVideoY = (0.5 - local) * 22;
+    const flowVideoScale = 1.022 - Math.abs(local - 0.5) * 0.012;
 
     scene.style.setProperty("--text-y", `${textY.toFixed(2)}px`);
     scene.style.setProperty("--text-o", `${textVisible.toFixed(3)}`);
@@ -144,12 +144,12 @@ function updateScenesAndParallax(now) {
   if (collectionScene && collectionItems.length) {
     const rect = getVirtualRect(collectionScene);
     const local = clamp((vh - rect.top) / (vh + rect.height), 0, 1);
-    const revealProgress = smoothstep((local - 0.08) / 0.66);
+    const revealProgress = smoothstep((local - 0.02) / 0.54);
 
     collectionItems.forEach((item, index) => {
       const threshold =
-        0.28 + (index / Math.max(1, collectionItems.length - 1)) * 0.34;
-      const itemProgress = smoothstep((revealProgress - threshold) / 0.17);
+        0.1 + (index / Math.max(1, collectionItems.length - 1)) * 0.24;
+      const itemProgress = smoothstep((revealProgress - threshold) / 0.18);
       const itemY = (1 - itemProgress) * (42 + index * 4);
       item.style.setProperty("--collection-o", itemProgress.toFixed(3));
       item.style.setProperty("--collection-y", `${itemY.toFixed(2)}px`);

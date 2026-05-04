@@ -4,8 +4,9 @@ Static Vite site for the LOEM brand intro and brand story experience.
 
 ## Pages
 
-- `/index.html` - animated brand intro with scroll-driven canvas composition.
-- `/brand-story.html` - brand story page with parallax scenes, collection icons, and video sections.
+- `/` - animated brand intro with scroll-driven canvas composition.
+- `/brand-story` - brand story page with parallax scenes, collection icons, and video sections.
+- `/lookbook` - lookbook shell.
 
 ## Local Development
 
@@ -26,6 +27,8 @@ The project is configured for Vercel as a Vite site. Production builds use `npm 
 
 Public media and fonts live under `public/assets`. Reference public files with absolute lowercase paths, for example `/assets/brand/Wordmark.svg` or `/assets/fonts/TestMartinaPlantijn-Light.otf`.
 
+Parked visual references live under `references/images` so they are not copied into production builds.
+
 Asset folders are grouped by role:
 
 - `brand` - logos, marks, and brand graphics.
@@ -34,7 +37,6 @@ Asset folders are grouped by role:
 - `icons/product-ranges` - collection and product-range icons.
 - `images/landing` - landing page imagery.
 - `images/brand-story` - brand story imagery.
-- `images/reference` - parked visual references not currently wired into a page.
 - `videos/landing` and `videos/brand-story` - page-specific motion assets.
 
 ## Future Sections
