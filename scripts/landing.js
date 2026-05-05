@@ -400,6 +400,18 @@ function createSectionMedia() {
         flipY: false,
       };
     }
+    if (
+      entry.assetPath &&
+      entry.assetPath.includes(
+        "loreworld_1768413242_3810047991433109308_65923060496 9.jpg",
+      )
+    ) {
+      media[index] = {
+        ...entry,
+        shiftXPx: (entry.shiftXPx || 0) + 180,
+        shiftYPx: (entry.shiftYPx || 0) - 170,
+      };
+    }
   });
   return media;
 }
